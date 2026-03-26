@@ -10,7 +10,7 @@ const meetingSchema = new Schema<IMeetingDoc>(
       unique: true,
     },
     hostId: {
-      type: String,
+      type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
@@ -25,4 +25,4 @@ const meetingSchema = new Schema<IMeetingDoc>(
   { timestamps: true },
 );
 
-export default model("Meeting", meetingSchema);
+export default model<IMeetingDoc>("Meeting", meetingSchema);

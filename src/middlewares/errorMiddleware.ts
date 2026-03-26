@@ -1,0 +1,13 @@
+import type { ErrorRequestHandler } from "express";
+
+export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+  console.error(err);
+
+  let statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+
+  res.status(statusCode).json({
+    success: false,
+    message: err.message || "Server Error",
+    stack: process.env.NODE_ENV === "production" ? null : err.stack,
+  });
+};

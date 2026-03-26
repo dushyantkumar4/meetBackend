@@ -12,4 +12,4 @@ const userSchema = new Schema<IUserDoc>(
   { timestamps: true },
 );
 
-export default model("User", userSchema);
+export default model<IUserDoc>("User", userSchema);

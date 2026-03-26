@@ -4,12 +4,12 @@ export interface IParticipantDoc extends IParticipant, Document {}
 
 const participantSchema = new Schema<IParticipantDoc>({
   meeting: {
-    type: String,
+    type: Schema.Types.ObjectId,
     ref: "Meeting",
     required: true,
   },
   user: {
-    type: String,
+    type: Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
@@ -30,4 +30,4 @@ const participantSchema = new Schema<IParticipantDoc>({
   },
 });
 
-export default model("Participant", participantSchema);
+export default model<IParticipant>("Participant", participantSchema);

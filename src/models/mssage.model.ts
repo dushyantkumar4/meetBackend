@@ -5,12 +5,12 @@ export interface IMessageDoc extends IMessage, Document {}
 const messageSchema = new Schema<IMessageDoc>(
   {
     meeting: {
-      type: String,
+      type: Schema.Types.ObjectId,
       ref: "Meeting",
       required: true,
     },
     sender: {
-      type: String,
+      type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
@@ -21,3 +21,5 @@ const messageSchema = new Schema<IMessageDoc>(
   },
   { timestamps: true },
 );
+
+export default model<IMessageDoc>("Message",messageSchema);
