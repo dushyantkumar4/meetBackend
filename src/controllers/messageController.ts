@@ -2,10 +2,15 @@ import type { Response } from "express";
 import Message from "../models/message.model.js";
 import User from "../models/user.model.js";
 import type { AuthRequest } from "../middlewares/clerkAuth.js";
+import { asyncHandler } from "../middlewares/asyncHandler.js";
 
-export const sendMessage = async (req: AuthRequest, res: Response) => {
-  try {
+export const sendMessage = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
     const user = await User.findOne({ clerkId: req.userId! });
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
 
     const message = await Message.create({
       meeting: req.body.meetingId,
@@ -13,15 +18,17 @@ export const sendMessage = async (req: AuthRequest, res: Response) => {
       message: req.body.message,
     });
 
-    res.json(message);
-  } catch {
-    res.status(500).json({ message: "Error sending message" });
-  }
-};
+    res.status(201).json(message);
+  },
+);
 
-export const getMessages = async (req: AuthRequest, res: Response) => {
-  const messages = await Message.find({
-    meeting: req.params.meetingId!,
-  }).populate("sender");
-  res.json(messages);
-};
+export const getMessages = asyncHandler(
+  async (req: AuthRequest, res: Response) => {
+    const messages = await Message.find({
+      meeting: req.params.meetingId!,
+    })
+      .populate("sender", "userName avatar")
+      .sort({ createdAt: 1 });
+    res.json(messages);
+  },
+);
