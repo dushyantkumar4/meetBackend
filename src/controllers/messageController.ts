@@ -1,5 +1,5 @@
 import type { Response } from "express";
-import Message from "../models/mssage.model.js";
+import Message from "../models/message.model.js";
 import User from "../models/user.model.js";
 import type { AuthRequest } from "../middlewares/clerkAuth.js";
 
