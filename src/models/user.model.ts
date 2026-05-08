@@ -1,5 +1,6 @@
 import { Schema, model, Document } from "mongoose";
 import type { IUser } from "../types/user.type.js";
+
 export interface IUserDoc extends IUser, Document {}
 
 const userSchema = new Schema<IUserDoc>(

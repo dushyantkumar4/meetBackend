@@ -1,5 +1,6 @@
 import { Schema, model, Document } from "mongoose";
 import type { IParticipant } from "../types/meeting.type.js";
+
 export interface IParticipantDoc extends IParticipant, Document {}
 
 const participantSchema = new Schema<IParticipantDoc>({
@@ -30,4 +31,4 @@ const participantSchema = new Schema<IParticipantDoc>({
   },
 });
 
-export default model<IParticipant>("Participant", participantSchema);
+export default model<IParticipantDoc>("Participant", participantSchema);

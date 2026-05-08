@@ -1,5 +1,6 @@
 import { Schema, model, Document } from "mongoose";
 import type { IMeeting } from "../types/meeting.type.js";
+
 export interface IMeetingDoc extends IMeeting, Document {}
 
 const meetingSchema = new Schema<IMeetingDoc>(
