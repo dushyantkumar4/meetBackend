@@ -1,13 +1,24 @@
-import type { ErrorRequestHandler } from "express";
+import type { Request, Response, NextFunction } from "express";
 
-export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
-  console.error(err);
+export const errorMiddleware = (
+  err: Error,
+  _req: Request,
+  res: Response,
+  _next: NextFunction
+): void => {
+  console.error("[Error]", err.message);
 
-  let statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+  // Mongoose duplicate key error
+  if (err.name === "MongoServerError" && (err as any).code === 11000) {
+    res.status(409).json({ message: "Resource already exists" });
+    return;
+  }
 
-  res.status(statusCode).json({
-    success: false,
-    message: err.message || "Server Error",
-    stack: process.env.NODE_ENV === "production" ? null : err.stack,
-  });
+  // Mongoose validation error
+  if (err.name === "ValidationError") {
+    res.status(400).json({ message: err.message });
+    return;
+  }
+
+  res.status(500).json({ message: "Internal server error" });
 };
