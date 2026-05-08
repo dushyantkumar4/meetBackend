@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
+import type { Types } from "mongoose";
+
 export interface IMessage {
-  meeting: mongoose.Types.ObjectId;
-  sender: mongoose.Types.ObjectId;
+  meeting: Types.ObjectId;
+  sender: Types.ObjectId;
   message: string;
-  createdAt: Date;
 }

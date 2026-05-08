@@ -1,15 +1,15 @@
-import mongoose from "mongoose";
+import type { Types } from "mongoose";
+
 export interface IMeeting {
-  meetingId: string; 
-  hostId: mongoose.Types.ObjectId; 
-  title:string;
+  meetingId: string;
+  hostId: Types.ObjectId;
+  title?: string;
   isActive: boolean;
-  endedAt?: Date;
 }
 
 export interface IParticipant {
-  meeting: mongoose.Types.ObjectId;
-  user: mongoose.Types.ObjectId;
+  meeting: Types.ObjectId;
+  user: Types.ObjectId;
   isMuted: boolean;
   isVideoOn: boolean;
   joinedAt: Date;

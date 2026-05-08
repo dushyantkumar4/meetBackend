@@ -3,5 +3,4 @@ export interface IUser {
   userName: string;
   email: string;
   avatar?: string;
-  createdAt: Date;
 }
