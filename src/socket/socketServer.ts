@@ -1,5 +1,12 @@
 import { Server as HttpServer } from "http";
 import { Server, Socket } from "socket.io";
+import { registerChatHandlers } from "./handlers/chat.handler.js";
+import { registerRoomHandlers } from "./handlers/room.handler.js";
+import { registerSignalingHandlers } from "./handlers/signaling.handler.js";
+
+interface SocketData {
+  userId: string;
+}
 
 // Data sent FROM Client TO Server
 interface ClientToServerEvents {
@@ -10,57 +17,26 @@ interface ClientToServerEvents {
     user: string;
   }) => void;
 }
-
-// Data sent FROM Server TO Client
-interface ServerToClientEvents {
-  "user-joined": (userId: string) => void;
-  "receive-message": (data: { message: string; user: string }) => void;
-}
-
-// Internal Socket Data (optional)
-interface InterServerEvents {
-  ping: () => void;
-}
-
-interface SocketData {
-  userId: string;
-}
 export const initSocket = (server: HttpServer) => {
-  const io = new Server<
-    ClientToServerEvents,
-    ServerToClientEvents,
-    InterServerEvents,
-    SocketData
-  >(server, {
+  const io = new Server(server, {
     cors: {
-      origin: "*",
+      origin: process.env.CLIENT_URL || "http://localhost:5173",
+      credentials: true,
     },
   });
 
-  io.on(
-    "connection",
-    (socket: Socket<ClientToServerEvents, ServerToClientEvents>) => {
-      console.log("User connected:", socket.id);
+  io.on("connection", (socket: Socket<any, any, any, SocketData>) => {
+    console.log("[Socket] Connected:", socket.id);
 
-      // TypeScript now knows meetingId and userId are strings
-      socket.on("join-room", (meetingId, userId) => {
-        socket.join(meetingId);
-        socket.to(meetingId).emit("user-joined", userId);
-      });
+    // Register all handler groups — each handles its own events
+    registerRoomHandlers(io, socket);
+    registerSignalingHandlers(io, socket);
+    registerChatHandlers(io, socket);
 
-      // TypeScript knows the shape of the data object here
-      socket.on("send-message", ({ meetingId, message, user }) => {
-        socket.to(meetingId).emit("receive-message", {
-          message,
-          user,
-        });
-      });
-
-      socket.on("disconnect", () => {
-        console.log("User disconnected:", socket.id);
-      });
-    },
-  );
+    socket.on("disconnect", (reason) => {
+      console.log("[Socket] Disconnected:", socket.id, reason);
+    });
+  });
 
   return io;
 };

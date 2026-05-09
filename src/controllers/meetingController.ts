@@ -38,9 +38,14 @@ export const getMeeting = asyncHandler(
 export const endMeeting = asyncHandler(
   async (req: AuthRequest, res: Response) => {
     const user = await User.findOne({ clerkId: req.userId! });
-
+    if (!user) {
+      res.status(404).json({
+        message: "User not found",
+      });
+      return;
+    }
     const meeting = await Meeting.findOneAndUpdate(
-      { meetingId: req.params.meetingId!, hostId: user?._id },
+      { meetingId: req.params.meetingId!, hostId: user._id },
       { isActive: false },
       { new: true },
     );
